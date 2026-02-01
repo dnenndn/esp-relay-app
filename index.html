@@ -1,376 +1,130 @@
 <!DOCTYPE html>
-<html><head>
-    <script src="https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js"></script>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#667eea">
-    <link rel="apple-touch-icon" href="icon.png">
-    
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>HiveMQ Relay Control</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            -webkit-font-smoothing: antialiased;    
-text-rendering: optimizeLegibility;
+<title>ESP Relay Pulse Control</title>
 
-        }
-        
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-        
-        .subtitle {
-            color: #666;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-        
-        .status-box {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: center;
-            border: 2px solid #e9ecef;
-        }
-        
-        #status {
-            font-size: 20px;
-            font-weight: bold;
-            color: #495057;
-        }
-        
-        .buttons-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        button {
-            padding: 18px;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .connect-btn {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        
-        .on-btn {
-            background: linear-gradient(135deg, #00C853, #00E676);
-            color: white;
-        }
-        
-        .off-btn {
-            background: linear-gradient(135deg, #FF5252, #FF4081);
-            color: white;
-        }
-        
-        .toggle-btn {
-            background: linear-gradient(135deg, #2979FF, #448AFF);
-            color: white;
-            grid-column: span 2;
-        }
-        
-        .status-btn {
-            background: linear-gradient(135deg, #7B1FA2, #9C27B0);
-            color: white;
-            grid-column: span 2;
-        }
-        
-        .log {
-            background: #f1f3f4;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            max-height: 150px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 12px;
-        }
-        
-        .log-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        .connection-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .led {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ccc;
-        }
-        
-        .led.connected {
-            background: #4CAF50;
-            box-shadow: 0 0 10px #4CAF50;
-        }
-        
-        .led.disconnected {
-            background: #f44336;
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
-            }
-            
-            button {
-                padding: 15px;
-                font-size: 16px;
-            }
-        }
-    </style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="apple-touch-icon" href="icon.png">
+
+<script src="https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js"></script>
+
+<style>
+body{
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    margin:0;
+    -webkit-font-smoothing: antialiased;
+}
+.container{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    width:90%;
+    max-width:420px;
+    text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,0.3);
+}
+h1{margin-bottom:10px;}
+.status{
+    margin:20px 0;
+    padding:15px;
+    border-radius:10px;
+    background:#f1f3f4;
+    font-weight:bold;
+}
+button{
+    width:100%;
+    padding:20px;
+    font-size:20px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#2979FF,#448AFF);
+    color:white;
+    cursor:pointer;
+}
+.log{
+    margin-top:20px;
+    font-size:12px;
+    text-align:left;
+    max-height:150px;
+    overflow:auto;
+    background:#f8f9fa;
+    padding:10px;
+    border-radius:10px;
+    font-family:monospace;
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>⚡ ESP8266 Relay Control</h1>
-        <div class="subtitle">Using HiveMQ Broker</div>
-        
-        <div class="connection-status">
-            <div class="led disconnected" id="connectionLed"></div>
-            <span id="connectionStatus">Disconnected</span>
-        </div>
-        
-        <div class="status-box">
-            <div id="status">Click Connect to start</div>
-        </div>
-        
-        <button class="connect-btn" onclick="connectToHiveMQ()">
-            <span>🔗</span> Connect to HiveMQ
-        </button>
-        
-        <div class="buttons-grid">
-            <button class="on-btn" onclick="sendCommand('ON')">
-                <span>🔘</span> TURN ON
-            </button>
-            <button class="off-btn" onclick="sendCommand('OFF')">
-                <span>❌</span> TURN OFF
-            </button>
-            <button class="toggle-btn" onclick="sendCommand('TOGGLE')">
-                <span>🔄</span> TOGGLE RELAY
-            </button>
-            <button class="status-btn" onclick="sendCommand('STATUS')">
-                <span>📊</span> GET STATUS
-            </button>
-        </div>
-        
-        <div class="log">
-            <div class="log-title">Event Log:</div>
-            <div id="log">[11:49:14] Page loaded. Click 'Connect to HiveMQ' to start.<br></div>
-        </div>
-    </div>
+<div class="container">
+    <h1>⚡ Relay Pulse</h1>
+    <div class="status" id="status">Connecting...</div>
+    <button onclick="sendPulse()">SEND 1s PULSE</button>
+    <div class="log" id="log"></div>
+</div>
 
-    <script>
-        // Configuration - CHANGE 'marouane' to match your ESP code
-        const TOPIC_CONTROL = 'marouane/relay/control';
-        const TOPIC_STATUS = 'marouane/relay/status';
-        const HIVEMQ_BROKER = 'wss://broker.hivemq.com:8884/mqtt'; // WebSocket SSL
-        
-        let mqttClient = null;
-        let isConnected = false;
-        
-        // DOM Elements
-        const statusElement = document.getElementById('status');
-        const connectionLed = document.getElementById('connectionLed');
-        const connectionStatus = document.getElementById('connectionStatus');
-        const logElement = document.getElementById('log');
-        
-        // Add to log
-        function addLog(message) {
-            const timestamp = new Date().toLocaleTimeString();
-            const logEntry = `[${timestamp}] ${message}<br>`;
-            logElement.innerHTML = logEntry + logElement.innerHTML;
-            
-            // Keep log manageable
-            if (logElement.children.length > 20) {
-                logElement.removeChild(logElement.lastChild);
-            }
-        }
-        
-        // Connect to HiveMQ
-        async function connectToHiveMQ() {
-            if (isConnected) {
-                addLog("Already connected");
-                return;
-            }
-            
-            try {
-                addLog("Connecting to HiveMQ...");
-                statusElement.textContent = "Connecting to HiveMQ...";
-                connectionStatus.textContent = "Connecting...";
-                
-                // Generate unique client ID
-                const clientId = 'web-client-' + Math.random().toString(16).substr(2, 8);
-                
-                // Connect options
-                const options = {
-                    clientId: clientId,
-                    clean: true,
-                    connectTimeout: 4000,
-                    reconnectPeriod: 1000,
-                };
-                
-                // Connect to HiveMQ
-                mqttClient = mqtt.connect(HIVEMQ_BROKER, options);
-                
-                // Setup event handlers
-                mqttClient.on('connect', () => {
-                    isConnected = true;
-                    connectionLed.className = 'led connected';
-                    connectionStatus.textContent = 'Connected to HiveMQ';
-                    statusElement.textContent = 'Connected! Waiting for status...';
-                    addLog("✅ Successfully connected to HiveMQ");
-                    
-                    // Subscribe to status topic
-                    mqttClient.subscribe(TOPIC_STATUS, (err) => {
-                        if (!err) {
-                            addLog(`📡 Subscribed to: ${TOPIC_STATUS}`);
-                            // Request initial status
-                            setTimeout(() => sendCommand('STATUS'), 500);
-                        } else {
-                            addLog(`❌ Subscribe error: ${err.message}`);
-                        }
-                    });
-                });
-                
-                mqttClient.on('message', (topic, message) => {
-                    const msg = message.toString();
-                    addLog(`📨 Received on ${topic}: ${msg}`);
-                    
-                    if (topic === TOPIC_STATUS) {
-                        statusElement.textContent = `Relay Status: ${msg}`;
-                    }
-                });
-                
-                mqttClient.on('error', (error) => {
-                    addLog(`❌ Connection error: ${error.message}`);
-                    statusElement.textContent = 'Connection error';
-                    connectionLed.className = 'led disconnected';
-                    connectionStatus.textContent = 'Error';
-                    isConnected = false;
-                });
-                
-                mqttClient.on('close', () => {
-                    addLog('⚠️ Connection closed');
-                    connectionLed.className = 'led disconnected';
-                    connectionStatus.textContent = 'Disconnected';
-                    statusElement.textContent = 'Disconnected';
-                    isConnected = false;
-                });
-                
-                mqttClient.on('offline', () => {
-                    addLog('📴 Client offline');
-                    isConnected = false;
-                });
-                
-                // Timeout after 10 seconds
-                setTimeout(() => {
-                    if (!isConnected && mqttClient) {
-                        addLog("⏰ Connection timeout");
-                        statusElement.textContent = "Connection timeout";
-                        mqttClient.end();
-                    }
-                }, 10000);
-                
-            } catch (error) {
-                addLog(`❌ Error: ${error.message}`);
-                statusElement.textContent = 'Connection failed';
-                connectionStatus.textContent = 'Failed';
-            }
-        }
-        
-        // Send command to ESP
-        function sendCommand(command) {
-            if (!isConnected || !mqttClient) {
-                addLog("⚠️ Not connected. Please connect first.");
-                statusElement.textContent = "Not connected. Click Connect first.";
-                return;
-            }
-            
-            addLog(`📤 Sending command: ${command}`);
-            statusElement.textContent = `Sending: ${command}...`;
-            
-            mqttClient.publish(TOPIC_CONTROL, command, { qos: 1 }, (error) => {
-                if (error) {
-                    addLog(`❌ Failed to send: ${error.message}`);
-                    statusElement.textContent = 'Send failed';
-                } else {
-                    addLog(`✅ Command sent: ${command}`);
-                }
-            });
-        }
-        
-        // Auto-connect when page loads
-        window.addEventListener('load', function () {
-     addLog("Page loaded. Auto-connecting to HiveMQ...");
-    connectToHiveMQ();
-});
+<script>
+const TOPIC_CONTROL = 'marouane/relay/control';
+const TOPIC_STATUS  = 'marouane/relay/status';
+const BROKER = 'wss://broker.hivemq.com:8884/mqtt';
 
-        
-        // Disconnect when page closes
-        window.addEventListener('beforeunload', () => {
-            if (mqttClient && isConnected) {
-                mqttClient.end();
-            }
-        });
-    </script>
+let client;
 
-</body></html>
+function log(msg){
+    const el = document.getElementById('log');
+    el.innerHTML = "["+new Date().toLocaleTimeString()+"] "+msg+"<br>"+el.innerHTML;
+}
+
+function connect(){
+    log("Connecting to HiveMQ...");
+    client = mqtt.connect(BROKER, {
+        clientId: 'web-'+Math.random().toString(16).substr(2,8)
+    });
+
+    client.on('connect', ()=>{
+        document.getElementById('status').innerText="Connected";
+        log("Connected");
+        client.subscribe(TOPIC_STATUS);
+    });
+
+    client.on('message',(topic,message)=>{
+        let msg = message.toString();
+        log("Received: "+msg);
+
+        if(msg==="PULSE_ON"){
+            document.getElementById('status').innerText="Relay ON (pulsing)";
+        }
+        if(msg==="PULSE_DONE"){
+            document.getElementById('status').innerText="Pulse finished";
+        }
+    });
+
+    client.on('error',(e)=>{
+        document.getElementById('status').innerText="Connection error";
+        log("Error: "+e.message);
+    });
+}
+
+function sendPulse(){
+    if(!client || !client.connected){
+        log("Not connected");
+        return;
+    }
+    client.publish(TOPIC_CONTROL,"PULSE");
+    document.getElementById('status').innerText="Sending pulse...";
+    log("PULSE sent");
+}
+
+window.onload = connect;
+</script>
+</body>
+</html>
